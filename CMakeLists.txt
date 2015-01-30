@@ -4,7 +4,7 @@ project ( struct C )
 include ( cmake/dist.cmake )
 include ( lua )
 
-install_lua_module ( struct struct.c )
+install_lua_module ( struct struct.c struct.def)
 
 install_doc ( struct.html )
 
