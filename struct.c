@@ -39,14 +39,14 @@
 
 #if (LUA_VERSION_NUM >= 502)
 
-#define luaL_register(L,n,f)	luaL_newlib(L,f)
+#define luaL_register(L,n,f)  luaL_newlib(L,f)
 
 #endif
 
 
 /* basic integer type */
 #if !defined(STRUCT_INT)
-#define STRUCT_INT	long
+#define STRUCT_INT  long
 #endif
 
 typedef STRUCT_INT Inttype;
@@ -56,10 +56,10 @@ typedef unsigned STRUCT_INT Uinttype;
 
 
 /* maximum size (in bytes) for integral types */
-#define MAXINTSIZE	32
+#define MAXINTSIZE  32
 
 /* is 'x' a power of 2? */
-#define isp2(x)		((x) > 0 && ((x) & ((x) - 1)) == 0)
+#define isp2(x)   ((x) > 0 && ((x) & ((x) - 1)) == 0)
 
 /* dummy structure to get alignment requirements */
 struct cD {
@@ -68,13 +68,13 @@ struct cD {
 };
 
 
-#define PADDING		(sizeof(struct cD) - sizeof(double))
-#define MAXALIGN  	(PADDING > sizeof(int) ? PADDING : sizeof(int))
+#define PADDING   (sizeof(struct cD) - sizeof(double))
+#define MAXALIGN    (PADDING > sizeof(int) ? PADDING : sizeof(int))
 
 
 /* endian options */
-#define BIG	0
-#define LITTLE	1
+#define BIG 0
+#define LITTLE  1
 
 
 static union {
@@ -102,7 +102,7 @@ static int getnum (const char **fmt, int df) {
 }
 
 
-#define defaultoptions(h)	((h)->endian = native.endian, (h)->align = 1)
+#define defaultoptions(h) ((h)->endian = native.endian, (h)->align = 1)
 
 
 
@@ -136,7 +136,7 @@ static int gettoalign (size_t len, Header *h, int opt, size_t size) {
   if (size == 0 || opt == 'c') return 0;
   if (size > (size_t)h->align)
     size = h->align;  /* respect max. alignment */
-  return (size - (len & (size - 1))) & (size - 1);
+  return (int)(size - (len & (size - 1))) & (size - 1);
 }
 
 
@@ -191,7 +191,7 @@ static void putinteger (lua_State *L, luaL_Buffer *b, int arg, int endian,
 }
 
 
-static void correctbytes (char *b, int size, int endian) {
+static void correctbytes (char *b, size_t size, int endian) {
   if (endian != native.endian) {
     int i = 0;
     while (i < --size) {
@@ -221,7 +221,7 @@ static int b_pack (lua_State *L) {
     switch (opt) {
       case 'b': case 'B': case 'h': case 'H':
       case 'l': case 'L': case 'T': case 'i': case 'I': {  /* integer types */
-        putinteger(L, &b, arg++, h.endian, size);
+        putinteger(L, &b, arg++, h.endian, (int)size);
         break;
       }
       case 'x': {
